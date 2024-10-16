@@ -1,0 +1,8 @@
+# Ignorar el directorio .vagrant
+.vagrant/
+
+# Ignorar ficheros de backup comunes
+*~
+*.bak
+*.tmp
+*.swp
