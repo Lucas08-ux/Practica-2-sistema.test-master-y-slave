@@ -11,4 +11,18 @@ Vagrant.configure("2") do |config|
      apt-get install -y apache2
   SHELL
 
+  config.vm.define "venus" do |venus|
+    venus.vm.box = "debian/bullseye64"
+    venus.vm.network "private_network", ip: "192.168.57.102"
+
+    venus.vm.hostname = "venus.sistema.test"
+  end # venus
+
+  config.vm.define "tierra" do |tierra|
+    tierra.vm.box = "debian/bullseye64"
+    tierra.vm.network "private_network", ip: "192.168.57.103"
+
+    tierra.vm.hostname = "tierra.sistema.test"
+  end # tierra
+
 end
