@@ -83,4 +83,15 @@ options {
     listen-on-v6 { any; };
 };
 
+# Edito de nuevo /etc/bind/named.conf.options en venus y tierra y le añado esto:
+
+acl "permitted" {
+    127.0.0.0/8;           // Permitir consultas desde localhost
+    192.168.57.0/24;       // Permitir consultas desde la red 192.168.57.0/24
+};
+
+# En el mismo archivo, dentro del bloque options, le añado esta línea para permitir la recursividad
+
+allow-recursion { permitted; };  // Permitir la recursión solo a la ACL definida
+
 # 
