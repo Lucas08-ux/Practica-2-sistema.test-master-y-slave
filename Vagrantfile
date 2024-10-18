@@ -9,6 +9,12 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
      apt-get install -y apache2
+
+     #Modifico la configuración para que Apache escuche solo en IPv4
+     sed -i 's/^Listen 80$/Listen 0.0.0.0:80/' /etc/apache2/ports.conf
+
+     #Reinicio Apache para aplicar los cambios
+     systemctl restart apache2
   SHELL
 
   config.vm.define "venus" do |venus|
