@@ -1,10 +1,8 @@
 "# Practica-2-sistema.test-master-y-slave" 
 
-He creado primero los archivos necesarios, que son .gitignore, Vagrantfile,
-README.md y LICENSE.
+# He creado primero los archivos necesarios, que son .gitignore, Vagrantfile, README.md y LICENSE.
 
-En .gitignore he escrito esto para que ignore el directorio .vagrant y los 
-backup con las extensiones más comunes:
+# En .gitignore he escrito esto para que ignore el directorio .vagrant y los backup con las extensiones más comunes:
 
 .vagrant/
 
@@ -14,8 +12,7 @@ backup con las extensiones más comunes:
 *.tmp
 *.swp
 
-
-He modificado Vagrantfile, añadiendo dos máquinas virtuales, que son venus y tierra:
+# He modificado Vagrantfile, añadiendo dos máquinas virtuales, que son venus y tierra:
 
 Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
@@ -39,11 +36,9 @@ Vagrant.configure("2") do |config|
 
 end
 
-He escrito "vagrant up" para que se instalen las MV y 
-se actualicen.
+# He escrito "vagrant up" para que se instalen las MV y se actualicen.
 
-He añadido estas líneas a Vagrantfile para que venus y tierra solo hagan
-escucha en protocolo IPv4:
+# He añadido estas líneas a Vagrantfile para que venus y tierra solo hagan escucha en protocolo IPv4:
 
 config.vm.provision "shell", inline: <<-SHELL
      apt-get update
@@ -56,7 +51,7 @@ config.vm.provision "shell", inline: <<-SHELL
      systemctl restart apache2
   SHELL
 
-Aquí muestro el comando que he usado y el archivo ports.conf una vez se ha modificado
+# Aquí muestro el comando que he usado y el archivo ports.conf una vez se ha modificado
 
 vagrant@tierra:~$ cat /etc/apache2/ports.conf
 
@@ -69,3 +64,23 @@ Listen 0.0.0.0:80
 <IfModule mod_gnutls.c>
         Listen 443
 </IfModule>
+
+# He añadido a Vagrantfile esta línea para que se instale bind9 (también se puede instalar de manera manual)
+
+apt-get install -y bind9
+
+# He modificado el archivo /etc/bind/named.conf.options en venus y tierra, poniendo dnssec-validation yes
+
+sudo nano /etc/bind/named.conf.options
+
+# Ya en el fichero
+
+options {
+    directory "/var/cache/bind";
+
+    dnssec-validation yes;  # Aquí se añade la línea
+
+    listen-on-v6 { any; };
+};
+
+# 
