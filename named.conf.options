@@ -1,0 +1,14 @@
+options {
+	directory "/var/cache/bind";
+
+	allow-recursion { permitted; };
+
+	dnssec-validation yes;
+
+	listen-on-v6 { none; };
+};
+
+acl "permitted" {
+	127.0.0.0/8;
+	192.168.57.0/24;
+};
