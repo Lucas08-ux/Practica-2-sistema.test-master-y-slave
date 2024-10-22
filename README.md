@@ -43,13 +43,13 @@ end
   listen-on-v6 { none; };
 ```
 # He añadido a Vagrantfile esta línea para que se instale bind9 (también se puede instalar de manera manual)
-
+```
   apt-get install -y bind9
-
+```
 # He modificado el archivo /etc/bind/named.conf.options en venus y tierra, poniendo dnssec-validation yes
-
-  sudo nano /etc/bind/named.conf.options
-
+```
+sudo nano /etc/bind/named.conf.options
+```
 # Ya en el fichero
 
 ```
@@ -70,9 +70,9 @@ acl "permitted" {
 };
 ```
 # En el mismo archivo, dentro del bloque options, le añado esta línea para permitir la recursividad
-
+```
 allow-recursion { permitted; };  // Permitir la recursión solo a la ACL definida
-
+```
 # Así queda al final:
 ```
 options {
@@ -90,3 +90,5 @@ acl "permitted" {
 	192.168.57.0/24;
 };
 ```
+
+# 
