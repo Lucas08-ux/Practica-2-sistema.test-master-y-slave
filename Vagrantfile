@@ -8,7 +8,7 @@
 Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
-     apt-get install -y bind9
+     apt-get install -y bind9 bind9utils bind9-doc
 
   SHELL
 
@@ -19,7 +19,8 @@ Vagrant.configure("2") do |config|
     venus.vm.hostname = "venus.sistema.test"
     venus.vm.provision "shell", inline: <<-SHELL
       cp -v /vagrant/named.conf.options /etc/bind/named.conf.options
-      
+      cp -v /vagrant/named /etc/default/named
+
     SHELL
   end # venus
 
@@ -30,7 +31,8 @@ Vagrant.configure("2") do |config|
     tierra.vm.hostname = "tierra.sistema.test"
     tierra.vm.provision "shell", inline: <<-SHELL
       cp -v /vagrant/named.conf.options /etc/bind/named.conf.options
-      
+      cp -v /vagrant/named /etc/default/named
+
     SHELL
   end # tierra
 
