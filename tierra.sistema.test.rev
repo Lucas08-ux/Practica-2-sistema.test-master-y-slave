@@ -8,7 +8,11 @@ $TTL	86400
 	3600	; Refresh
 	1800	; Retry
 	604800	; Expire
-	7200 )	; Negative Cache TTL (2 horas en segundos)
+	7200 )	; Negative Cache TTL
 ;
 @ IN NS debian.tierra.sistema.test.
 103 IN PTR debian.tierra.sistema.test.
+101 IN PTR mercurio.sistema.test.
+102 IN PTR venus.sistema.test.
+103 IN PTR tierra.sistema.test.
+104 IN PTR marte.sistema.test.

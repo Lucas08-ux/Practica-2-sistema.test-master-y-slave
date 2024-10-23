@@ -186,5 +186,53 @@ zone "57.168.192.in-addr.arpa" {
 		208.67.222.222;
 	};
 ```
+# He modificado los dos archivos de zonas directa e inversa, añadiendo también los dos servidores imaginarios marte y mercurio.
+```
+;
+; tierra.sistema.test
+;
 
-# 
+$TTL	86400
+@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
+	1	; Serial
+	3600	; Refresh
+	1800	; Retry
+	604800	; Expire
+	7200 )	; Negative Cache TTL
+;
+@ IN NS debian.tierra.sistema.test.
+
+@ IN A 192.168.57.103
+
+mercurio IN A 192.168.57.101
+marte IN A 192.168.57.104
+venus IN A 192.168.57.102
+debian IN A 192.168.57.103
+
+; Alias
+ns1 IN CNAME tierra.sistema.test.  ; ns1 es un alias de tierra
+ns2 IN CNAME venus.sistema.test.    ; ns2 es un alias de venus
+mail IN CNAME marte.sistema.test.    ; mail es un alias de marte
+```
+# Y esta es la inversa
+```
+;
+; 103.57.168.192
+;
+
+$TTL	86400
+@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
+	1	; Serial
+	3600	; Refresh
+	1800	; Retry
+	604800	; Expire
+	7200 )	; Negative Cache TTL
+;
+@ IN NS debian.tierra.sistema.test.
+103 IN PTR debian.tierra.sistema.test.
+101 IN PTR mercurio.sistema.test.
+102 IN PTR venus.sistema.test.
+103 IN PTR tierra.sistema.test.
+104 IN PTR marte.sistema.test.
+```
+

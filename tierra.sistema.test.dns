@@ -8,7 +8,18 @@ $TTL	86400
 	3600	; Refresh
 	1800	; Retry
 	604800	; Expire
-	7200 )	; Negative Cache TTL (2 horas en segundos)
+	7200 )	; Negative Cache TTL
 ;
 @ IN NS debian.tierra.sistema.test.
-debian.tierra.sistema.test. IN A 192.168.57.103
+
+@ IN A 192.168.57.103
+
+mercurio IN A 192.168.57.101
+marte IN A 192.168.57.104
+venus IN A 192.168.57.102
+debian IN A 192.168.57.103
+
+; Alias
+ns1 IN CNAME tierra.sistema.test.  ; ns1 es un alias de tierra
+ns2 IN CNAME venus.sistema.test.    ; ns2 es un alias de venus
+mail IN CNAME marte.sistema.test.    ; mail es un alias de marte
