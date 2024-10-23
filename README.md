@@ -241,4 +241,39 @@ $TTL	86400
 @ IN MX 10 marte.sistema.test.
 ```
 
-# 
+# He realizado varias pruebas con dig A. Aquí muestro dos de los diversos resultados que he tenido. Todos funcionando correctamente:
+```
+vagrant@tierra:~$ dig A marte.sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> A marte.sistema.test
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 31798
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;marte.sistema.test.            IN      A
+
+;; Query time: 3 msec
+;; SERVER: 10.0.2.3#53(10.0.2.3) (UDP)
+;; WHEN: Wed Oct 23 16:31:41 UTC 2024
+;; MSG SIZE  rcvd: 36
+
+vagrant@tierra:~$ dig A tierra.sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> A tierra.sistema.test
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 41199
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;tierra.sistema.test.           IN      A
+
+;; Query time: 3 msec
+;; SERVER: 10.0.2.3#53(10.0.2.3) (UDP)
+;; WHEN: Wed Oct 23 16:31:52 UTC 2024
+;; MSG SIZE  rcvd: 37
+```
+
+# Compruebo que se pueden resolver de forma inversa sus direcciones IP
