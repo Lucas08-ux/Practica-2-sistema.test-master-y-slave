@@ -1,0 +1,14 @@
+;
+; 103.57.168.192
+;
+
+$TTL	86400
+@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
+	1	; Serial
+	3600	; Refresh
+	1800	; Retry
+	604800	; Expire
+	7200 )	; Negative Cache TTL (2 horas en segundos)
+;
+@ IN NS debian.tierra.sistema.test.
+103 IN PTR debian.tierra.sistema.test.
