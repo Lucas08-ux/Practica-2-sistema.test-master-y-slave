@@ -94,16 +94,26 @@ acl "permitted" {
 # Modifico named.conf.local de tierra y le pongo reverse
 
 ```
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
 zone "tierra.sistema.test" {
-        type master;
-        file "var/lib/bind/tierra.sistema.test.dns";
+	type master;
+	file "/var/lib/bind/tierra.sistema.test.dns";
+	allow-transfer { 192.168.57.102; };
 };
 
 //Inversa
 
-zone "103.57.168.192.in-addr.arpa" {
-        type: master;
-        file "/var/lib/bind/tierra.sistema.test.rev";
+zone "57.168.192.in-addr.arpa" {
+	type master;
+	file "/var/lib/bind/tierra.sistema.test.rev";
+	allow-transfer { 192.168.57.102; };	
 };
 ```
 
@@ -142,4 +152,26 @@ $TTL	86400
 103 IN PTR debian.tierra.sistema.test.
 ```
 
+# Modifico named.conf.local de venus y le pongo reverse
+```
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+zone "tierra.sistema.test" {
+    type slave;
+    file "/var/lib/bind/tierra.sistema.test.zone";
+    masters { 192.168.57.103; }; # IP del servidor maestro (tierra)
+};
+
+zone "57.168.192.in-addr.arpa" {
+    type slave;
+    file "/var/lib/bind/tierra.sistema.test.rev";
+    masters { 192.168.57.103; }; # IP del servidor maestro (tierra)
+};
+```
 
