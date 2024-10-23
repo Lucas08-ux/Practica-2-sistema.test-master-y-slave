@@ -174,4 +174,7 @@ zone "57.168.192.in-addr.arpa" {
     masters { 192.168.57.103; }; # IP del servidor maestro (tierra)
 };
 ```
-
+# He puesto esta línea en los archivos de zona directa e inversa para que el tiempo caché de las respuestas sea de 2 horas
+```
+7200     ; Negative Cache TTL (2 horas en segundos)
+```
