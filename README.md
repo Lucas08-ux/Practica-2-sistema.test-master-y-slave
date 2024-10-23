@@ -243,37 +243,195 @@ $TTL	86400
 
 # He realizado varias pruebas con dig A. Aquí muestro dos de los diversos resultados que he tenido. Todos funcionando correctamente:
 ```
-vagrant@tierra:~$ dig A marte.sistema.test
+vagrant@tierra:~$ dig @192.168.57.103 A tierra.sistema.test
 
-; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> A marte.sistema.test
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 A tierra.sistema.test
+; (1 server found)
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 31798
-;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 55789
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
 
-;; QUESTION SECTION:
-;marte.sistema.test.            IN      A
-
-;; Query time: 3 msec
-;; SERVER: 10.0.2.3#53(10.0.2.3) (UDP)
-;; WHEN: Wed Oct 23 16:31:41 UTC 2024
-;; MSG SIZE  rcvd: 36
-
-vagrant@tierra:~$ dig A tierra.sistema.test
-
-; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> A tierra.sistema.test
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 41199
-;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 0, ADDITIONAL: 0
-
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: da0ff394882cd7e60100000067194ac601f68dfb972b8bf4 (good)
 ;; QUESTION SECTION:
 ;tierra.sistema.test.           IN      A
 
+;; ANSWER SECTION:
+tierra.sistema.test.    86400   IN      A       192.168.57.103
+
 ;; Query time: 3 msec
-;; SERVER: 10.0.2.3#53(10.0.2.3) (UDP)
-;; WHEN: Wed Oct 23 16:31:52 UTC 2024
-;; MSG SIZE  rcvd: 37
+;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
+;; WHEN: Wed Oct 23 19:13:10 UTC 2024
+;; MSG SIZE  rcvd: 92
+
+vagrant@tierra:~$ dig @192.168.57.103 A mercurio.sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 A mercurio.sistema.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 63709
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: f4647117baf3ffe50100000067194ac65dadd1741a392ba1 (good)
+;; QUESTION SECTION:
+;mercurio.sistema.test.         IN      A
+
+;; ANSWER SECTION:
+mercurio.sistema.test.  86400   IN      A       192.168.57.101
+
+;; Query time: 3 msec
+;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
+;; WHEN: Wed Oct 23 19:13:10 UTC 2024
+;; MSG SIZE  rcvd: 94
 ```
 
-# Compruebo que se pueden resolver de forma inversa sus direcciones IP
+# Compruebo que se pueden resolver de forma inversa sus direcciones IP. Aquí muestro un ejemplo con dig:
+```
+vagrant@tierra:~$ dig @192.168.57.102
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.102
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43848
+;; flags: qr rd ra; QUERY: 1, ANSWER: 13, AUTHORITY: 0, ADDITIONAL: 27
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: b2921106844d848601000000671940ccd1b4ce08cbab5ccc (good)
+;; QUESTION SECTION:
+;.                              IN      NS
+
+;; ANSWER SECTION:
+.                       516325  IN      NS      h.root-servers.net.
+.                       516325  IN      NS      j.root-servers.net.
+.                       516325  IN      NS      d.root-servers.net.
+.                       516325  IN      NS      b.root-servers.net.
+.                       516325  IN      NS      c.root-servers.net.
+.                       516325  IN      NS      f.root-servers.net.
+.                       516325  IN      NS      e.root-servers.net.
+.                       516325  IN      NS      g.root-servers.net.
+.                       516325  IN      NS      a.root-servers.net.
+.                       516325  IN      NS      i.root-servers.net.
+.                       516325  IN      NS      m.root-servers.net.
+.                       516325  IN      NS      l.root-servers.net.
+.                       516325  IN      NS      k.root-servers.net.
+
+;; ADDITIONAL SECTION:
+a.root-servers.net.     516325  IN      A       198.41.0.4
+b.root-servers.net.     516325  IN      A       170.247.170.2
+c.root-servers.net.     516325  IN      A       192.33.4.12
+d.root-servers.net.     516325  IN      A       199.7.91.13
+e.root-servers.net.     516325  IN      A       192.203.230.10
+f.root-servers.net.     516325  IN      A       192.5.5.241
+g.root-servers.net.     516325  IN      A       192.112.36.4
+h.root-servers.net.     516325  IN      A       198.97.190.53
+i.root-servers.net.     516325  IN      A       192.36.148.17
+j.root-servers.net.     516325  IN      A       192.58.128.30
+k.root-servers.net.     516325  IN      A       193.0.14.129
+l.root-servers.net.     516325  IN      A       199.7.83.42
+m.root-servers.net.     516325  IN      A       202.12.27.33
+a.root-servers.net.     516325  IN      AAAA    2001:503:ba3e::2:30
+b.root-servers.net.     516325  IN      AAAA    2801:1b8:10::b
+c.root-servers.net.     516325  IN      AAAA    2001:500:2::c
+d.root-servers.net.     516325  IN      AAAA    2001:500:2d::d
+e.root-servers.net.     516325  IN      AAAA    2001:500:a8::e
+f.root-servers.net.     516325  IN      AAAA    2001:500:2f::f
+g.root-servers.net.     516325  IN      AAAA    2001:500:12::d0d
+h.root-servers.net.     516325  IN      AAAA    2001:500:1::53
+i.root-servers.net.     516325  IN      AAAA    2001:7fe::53
+j.root-servers.net.     516325  IN      AAAA    2001:503:c27::2:30
+k.root-servers.net.     516325  IN      AAAA    2001:7fd::1
+l.root-servers.net.     516325  IN      AAAA    2001:500:9f::42
+m.root-servers.net.     516325  IN      AAAA    2001:dc3::35
+
+;; Query time: 0 msec
+;; SERVER: 192.168.57.102#53(192.168.57.102) (UDP)
+;; WHEN: Wed Oct 23 18:30:36 UTC 2024
+;; MSG SIZE  rcvd: 851
+```
+
+# Prueba con los alias ns1 y ns2
+
+vagrant@tierra:~$ dig @192.168.57.103 CNAME ns1.sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 CNAME ns1.sistema.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 58945
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: c0686b80f0ea6e9b0100000067194a83643efa3ac00effc6 (good)
+;; QUESTION SECTION:
+;ns1.sistema.test.              IN      CNAME
+
+;; ANSWER SECTION:
+ns1.sistema.test.       86400   IN      CNAME   tierra.sistema.test.
+
+;; Query time: 0 msec
+;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
+;; WHEN: Wed Oct 23 19:12:03 UTC 2024
+;; MSG SIZE  rcvd: 94
+
+vagrant@tierra:~$ dig @192.168.57.103 CNAME ns2.sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 CNAME ns2.sistema.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 15625
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 455cd9b545cac6a10100000067194a8cfac278659b418a4c (good)
+;; QUESTION SECTION:
+;ns2.sistema.test.              IN      CNAME
+
+;; ANSWER SECTION:
+ns2.sistema.test.       86400   IN      CNAME   venus.sistema.test.
+
+;; Query time: 0 msec
+;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
+;; WHEN: Wed Oct 23 19:12:12 UTC 2024
+;; MSG SIZE  rcvd: 93
+
+# Realiza la consulta para saber los servidores NS de sistema.test.
+
+vagrant@tierra:~$ dig @192.168.57.103 NS sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 NS sistema.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 5560
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 3
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 1869a5954daedcb90100000067194b4f7526a1af446f967b (good)
+;; QUESTION SECTION:
+;sistema.test.                  IN      NS
+
+;; ANSWER SECTION:
+sistema.test.           86400   IN      NS      tierra.sistema.test.
+sistema.test.           86400   IN      NS      venus.sistema.test.
+
+;; ADDITIONAL SECTION:
+venus.sistema.test.     86400   IN      A       192.168.57.102
+tierra.sistema.test.    86400   IN      A       192.168.57.103
+
+;; Query time: 0 msec
+;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
+;; WHEN: Wed Oct 23 19:15:27 UTC 2024
+;; MSG SIZE  rcvd: 142
+
+#
