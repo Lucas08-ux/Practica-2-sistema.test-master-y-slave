@@ -5,6 +5,8 @@ options {
 
 	dnssec-validation yes;
 
+	listen-on port 53 { 192.168.57.X; }
+
 	listen-on-v6 { none; };
 };
 

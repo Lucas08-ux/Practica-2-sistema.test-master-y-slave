@@ -91,4 +91,55 @@ acl "permitted" {
 };
 ```
 
-# 
+# Modifico named.conf.local de tierra y le pongo reverse
+
+```
+zone "tierra.sistema.test" {
+        type master;
+        file "var/lib/bind/tierra.sistema.test.dns";
+};
+
+//Inversa
+
+zone "103.57.168.192.in-addr.arpa" {
+        type: master;
+        file "/var/lib/bind/tierra.sistema.test.rev";
+};
+```
+
+# Zona directa maestro
+```
+;
+; tierra.sistema.test
+;
+
+$TTL	86400
+@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
+	1	; Serial
+	3600	; Refresh
+	1800	; Retry
+	604800	; Expire
+	86400 )	; Negative Cache TTL
+;
+@ IN NS debian.tierra.sistema.test.
+debian.tierra.sistema.test. IN A 192.168.57.103
+```
+# Zona inversa maestro
+```
+;
+; 103.57.168.192
+;
+
+$TTL	86400
+@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
+	1	; Serial
+	3600	; Refresh
+	1800	; Retry
+	604800	; Expire
+	86400 )	; Negative Cache TTL
+;
+@ IN NS debian.tierra.sistema.test.
+103 IN PTR debian.tierra.sistema.test.
+```
+
+

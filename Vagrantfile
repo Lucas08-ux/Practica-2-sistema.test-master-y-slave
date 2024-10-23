@@ -20,7 +20,9 @@ Vagrant.configure("2") do |config|
     venus.vm.provision "shell", inline: <<-SHELL
       cp -v /vagrant/named.conf.options /etc/bind/named.conf.options
       cp -v /vagrant/named /etc/default/named
-
+      cp -v /vagrant/tierra.named.conf.local /etc/bind/named.conf.local
+      cp -v /vagrant/tierra.sistema.test.dns /var/lib/bind/tierra.sistema.test.dns
+      cp -v /vagrant/tierra.sistema.test.rev /var/lib/bind/tierra.sistema.test.rev
     SHELL
   end # venus
 
@@ -32,6 +34,7 @@ Vagrant.configure("2") do |config|
     tierra.vm.provision "shell", inline: <<-SHELL
       cp -v /vagrant/named.conf.options /etc/bind/named.conf.options
       cp -v /vagrant/named /etc/default/named
+      
 
     SHELL
   end # tierra
