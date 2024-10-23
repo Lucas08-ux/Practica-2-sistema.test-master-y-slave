@@ -5,9 +5,14 @@ options {
 
 	dnssec-validation yes;
 
-	listen-on port 53 { 192.168.57.X; }
-
+	listen-on port 53 { 192.168.57.103; };
 	listen-on-v6 { none; };
+
+	//Configuro reenvio
+	forward only;
+	forwarders {
+		208.67.222.222;
+	};
 };
 
 acl "permitted" {

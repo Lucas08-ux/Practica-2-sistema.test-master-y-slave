@@ -178,3 +178,13 @@ zone "57.168.192.in-addr.arpa" {
 ```
 7200     ; Negative Cache TTL (2 horas en segundos)
 ```
+# He modificado el archivo named.conf.options para que consultas que reciba el servidor para la que no está autorizado, deberá reenviarlas (forward) al servidor DNS 208.67.222.222 (OpenDNS)
+```
+//Configuro reenvio
+	forward only;
+	forwarders {
+		208.67.222.222;
+	};
+```
+
+# 
