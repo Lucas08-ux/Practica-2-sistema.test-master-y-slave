@@ -23,3 +23,5 @@ debian IN A 192.168.57.103
 ns1 IN CNAME tierra.sistema.test.  ; ns1 es un alias de tierra
 ns2 IN CNAME venus.sistema.test.    ; ns2 es un alias de venus
 mail IN CNAME marte.sistema.test.    ; mail es un alias de marte
+
+@ IN MX 10 marte.sistema.test.

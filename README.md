@@ -236,3 +236,9 @@ $TTL	86400
 104 IN PTR marte.sistema.test.
 ```
 
+# He añadido el correo de marte en tierra.sistema.test.dns
+```
+@ IN MX 10 marte.sistema.test.
+```
+
+# 
