@@ -18,17 +18,18 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
      apt-get install -y apache2
+	 apt-get install -y bind9
   SHELL
 
   config.vm.define "venus" do |venus|
-    venus.vm.box = "debian/bullseye64"
+    venus.vm.box = "debian/bookworm64"
     venus.vm.network "private_network", ip: "192.168.57.102"
 
     venus.vm.hostname = "venus.sistema.test"
   end # venus
 
   config.vm.define "tierra" do |tierra|
-    tierra.vm.box = "debian/bullseye64"
+    tierra.vm.box = "debian/bookworm64"
     tierra.vm.network "private_network", ip: "192.168.57.103"
 
     tierra.vm.hostname = "tierra.sistema.test"
@@ -36,32 +37,23 @@ Vagrant.configure("2") do |config|
 
 end
 ```
-# He escrito "vagrant up" para que se instalen las MV y se actualicen.
-
 # He añadido estas línea a /etc/bind/named.conf.options para que venus y tierra solo hagan escucha en protocolo IPv4:
 ```
   listen-on-v6 { none; };
 ```
-# He añadido a Vagrantfile esta línea para que se instale bind9 (también se puede instalar de manera manual)
+# También en el fichero /etc/default named he modificado la línea OPTIONS para que funcione solo en IPv4:
 ```
-  apt-get install -y bind9
+#
+# run resolvconf?
+RESOLVCONF=no
+
+# startup options for the server
+OPTIONS="-u bind -4"
 ```
 # He modificado el archivo /etc/bind/named.conf.options en venus y tierra, poniendo dnssec-validation yes
 ```
 sudo nano /etc/bind/named.conf.options
 ```
-# Ya en el fichero
-
-```
-options {
-    directory "/var/cache/bind";
-
-    dnssec-validation yes;  # Aquí se añade la línea
-
-    listen-on-v6 { none; };
-};
-```
-
 # Edito de nuevo /etc/bind/named.conf.options en venus y tierra y le añado esto:
 ```
 acl "permitted" {
@@ -102,7 +94,7 @@ acl "permitted" {
 // organization
 //include "/etc/bind/zones.rfc1918";
 
-zone "tierra.sistema.test" {
+zone "sistema.test" {
 	type master;
 	file "/var/lib/bind/tierra.sistema.test.dns";
 	allow-transfer { 192.168.57.102; };
@@ -124,15 +116,29 @@ zone "57.168.192.in-addr.arpa" {
 ;
 
 $TTL	86400
-@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
-	1	; Serial
+@ IN SOA tierra.sistema.test. admin.tierra.sistema.test. (
+	2024102301	; Serial
 	3600	; Refresh
 	1800	; Retry
 	604800	; Expire
-	86400 )	; Negative Cache TTL
+	7200 )	; Negative Cache TTL
 ;
-@ IN NS debian.tierra.sistema.test.
-debian.tierra.sistema.test. IN A 192.168.57.103
+@ IN NS tierra.sistema.test.
+@ IN NS venus.sistema.test.
+
+@ IN A 192.168.57.103
+
+mercurio IN A 192.168.57.101
+marte IN A 192.168.57.104
+venus IN A 192.168.57.102
+tierra IN A 192.168.57.103
+
+; Alias
+ns1 IN CNAME tierra.sistema.test.  ; ns1 es un alias de tierra
+ns2 IN CNAME venus.sistema.test.    ; ns2 es un alias de venus
+mail IN CNAME marte.sistema.test.    ; mail es un alias de marte
+
+@ IN MX 10 marte.sistema.test.
 ```
 # Zona inversa maestro
 ```
@@ -141,18 +147,21 @@ debian.tierra.sistema.test. IN A 192.168.57.103
 ;
 
 $TTL	86400
-@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
+@ IN SOA tierra.sistema.test. admin.tierra.sistema.test. (
 	1	; Serial
 	3600	; Refresh
 	1800	; Retry
 	604800	; Expire
-	86400 )	; Negative Cache TTL
+	7200 )	; Negative Cache TTL
 ;
-@ IN NS debian.tierra.sistema.test.
-103 IN PTR debian.tierra.sistema.test.
+@ IN NS tierra.sistema.test.
+103 IN PTR tierra.sistema.test.
+101 IN PTR mercurio.sistema.test.
+102 IN PTR venus.sistema.test.
+104 IN PTR marte.sistema.test.
 ```
 
-# Modifico named.conf.local de venus y le pongo reverse
+# Modifico named.conf.local de venus y le pongo reverse también
 ```
 //
 // Do any local configuration here
@@ -162,7 +171,7 @@ $TTL	86400
 // organization
 //include "/etc/bind/zones.rfc1918";
 
-zone "tierra.sistema.test" {
+zone "sistema.test" {
     type slave;
     file "/var/lib/bind/tierra.sistema.test.zone";
     masters { 192.168.57.103; }; # IP del servidor maestro (tierra)
@@ -178,67 +187,29 @@ zone "57.168.192.in-addr.arpa" {
 ```
 7200     ; Negative Cache TTL (2 horas en segundos)
 ```
-# He modificado el archivo named.conf.options para que consultas que reciba el servidor para la que no está autorizado, deberá reenviarlas (forward) al servidor DNS 208.67.222.222 (OpenDNS)
+# He modificado el archivo named.conf.options para que consultas que reciba el servidor para la que no está autorizado, deberá reenviarlas (forward) al servidor DNS 208.67.222.222 (OpenDNS). Aquí se ve el archivo completo:
 ```
-//Configuro reenvio
+options {
+	directory "/var/cache/bind";
+
+	allow-recursion { permitted; };
+
+	dnssec-validation yes;
+
+	listen-on port 53 { 192.168.57.103; };
+	listen-on-v6 { none; };
+
+	//Configuro reenvio
 	forward only;
 	forwarders {
 		208.67.222.222;
 	};
-```
-# He modificado los dos archivos de zonas directa e inversa, añadiendo también los dos servidores imaginarios marte y mercurio.
-```
-;
-; tierra.sistema.test
-;
+};
 
-$TTL	86400
-@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
-	1	; Serial
-	3600	; Refresh
-	1800	; Retry
-	604800	; Expire
-	7200 )	; Negative Cache TTL
-;
-@ IN NS debian.tierra.sistema.test.
-
-@ IN A 192.168.57.103
-
-mercurio IN A 192.168.57.101
-marte IN A 192.168.57.104
-venus IN A 192.168.57.102
-debian IN A 192.168.57.103
-
-; Alias
-ns1 IN CNAME tierra.sistema.test.  ; ns1 es un alias de tierra
-ns2 IN CNAME venus.sistema.test.    ; ns2 es un alias de venus
-mail IN CNAME marte.sistema.test.    ; mail es un alias de marte
-```
-# Y esta es la inversa
-```
-;
-; 103.57.168.192
-;
-
-$TTL	86400
-@ IN SOA debian.tierra.sistema.test. admin.tierra.sistema.test. (
-	1	; Serial
-	3600	; Refresh
-	1800	; Retry
-	604800	; Expire
-	7200 )	; Negative Cache TTL
-;
-@ IN NS debian.tierra.sistema.test.
-103 IN PTR debian.tierra.sistema.test.
-101 IN PTR mercurio.sistema.test.
-102 IN PTR venus.sistema.test.
-103 IN PTR tierra.sistema.test.
-104 IN PTR marte.sistema.test.
-```
-
-# He añadido el correo de marte en tierra.sistema.test.dns
-```
-@ IN MX 10 marte.sistema.test.
+acl "permitted" {
+	127.0.0.0/8;
+	192.168.57.0/24;
+};
 ```
 
 # He realizado varias pruebas con dig A. Aquí muestro dos de los diversos resultados que he tenido. Todos funcionando correctamente:
@@ -357,7 +328,7 @@ m.root-servers.net.     516325  IN      AAAA    2001:dc3::35
 ```
 
 # Prueba con los alias ns1 y ns2
-
+```
 vagrant@tierra:~$ dig @192.168.57.103 CNAME ns1.sistema.test
 
 ; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 CNAME ns1.sistema.test
@@ -403,9 +374,9 @@ ns2.sistema.test.       86400   IN      CNAME   venus.sistema.test.
 ;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
 ;; WHEN: Wed Oct 23 19:12:12 UTC 2024
 ;; MSG SIZE  rcvd: 93
-
-# Realiza la consulta para saber los servidores NS de sistema.test.
-
+```
+# Realizo la consulta para saber los servidores NS de sistema.test.
+```
 vagrant@tierra:~$ dig @192.168.57.103 NS sistema.test
 
 ; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 NS sistema.test
@@ -433,5 +404,5 @@ tierra.sistema.test.    86400   IN      A       192.168.57.103
 ;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
 ;; WHEN: Wed Oct 23 19:15:27 UTC 2024
 ;; MSG SIZE  rcvd: 142
-
+```
 #
