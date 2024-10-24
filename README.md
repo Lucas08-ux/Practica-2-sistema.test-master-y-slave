@@ -405,4 +405,117 @@ tierra.sistema.test.    86400   IN      A       192.168.57.103
 ;; WHEN: Wed Oct 23 19:15:27 UTC 2024
 ;; MSG SIZE  rcvd: 142
 ```
-#
+# Realizo la consulta para saber los servidores MX de sistema.test
+```
+vagrant@tierra:~$ dig @192.168.57.103 MX sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 MX sistema.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 43374
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 2
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: b0aaaf43dc2775a001000000671a7fa3b321c8ede7d813ab (good)
+;; QUESTION SECTION:
+;sistema.test.                  IN      MX
+
+;; ANSWER SECTION:
+sistema.test.           86400   IN      MX      10 marte.sistema.test.
+
+;; ADDITIONAL SECTION:
+marte.sistema.test.     86400   IN      A       192.168.57.104
+
+;; Query time: 0 msec
+;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
+;; WHEN: Thu Oct 24 17:10:59 UTC 2024
+;; MSG SIZE  rcvd: 107
+```
+
+#  Compruebo que se ha realizado la transferencia de la zona entre el servidor DNS maestro y el esclavo y reviso los log:
+```
+vagrant@tierra:~$ dig @192.168.57.102 AXFR sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.102 AXFR sistema.test
+; (1 server found)
+;; global options: +cmd
+sistema.test.           86400   IN      SOA     tierra.sistema.test. admin.tierra.sistema.test. 2024102301 3600 1800 604800 7200
+sistema.test.           86400   IN      A       192.168.57.103
+sistema.test.           86400   IN      NS      venus.sistema.test.
+sistema.test.           86400   IN      NS      tierra.sistema.test.
+sistema.test.           86400   IN      MX      10 marte.sistema.test.
+mail.sistema.test.      86400   IN      CNAME   marte.sistema.test.
+marte.sistema.test.     86400   IN      A       192.168.57.104
+mercurio.sistema.test.  86400   IN      A       192.168.57.101
+ns1.sistema.test.       86400   IN      CNAME   tierra.sistema.test.
+ns2.sistema.test.       86400   IN      CNAME   venus.sistema.test.
+tierra.sistema.test.    86400   IN      A       192.168.57.103
+venus.sistema.test.     86400   IN      A       192.168.57.102
+sistema.test.           86400   IN      SOA     tierra.sistema.test. admin.tierra.sistema.test. 2024102301 3600 1800 604800 7200
+;; Query time: 0 msec
+;; SERVER: 192.168.57.102#53(192.168.57.102) (TCP)
+;; WHEN: Thu Oct 24 17:19:56 UTC 2024
+;; XFR size: 13 records (messages 1, bytes 354)
+
+vagrant@tierra:~$ sudo tail -f /var/log/syslog
+2024-10-24T17:18:59.455403+00:00 tierra systemd[1]: Starting user@1000.service - User Manager for UID 1000...
+2024-10-24T17:18:59.509989+00:00 tierra systemd[1578]: Queued start job for default target default.target.
+2024-10-24T17:18:59.536768+00:00 tierra systemd[1578]: Reached target paths.target - Paths.
+2024-10-24T17:18:59.537072+00:00 tierra systemd[1578]: Reached target sockets.target - Sockets.
+2024-10-24T17:18:59.537186+00:00 tierra systemd[1578]: Reached target timers.target - Timers.
+2024-10-24T17:18:59.537408+00:00 tierra systemd[1578]: Reached target basic.target - Basic System.
+2024-10-24T17:18:59.537720+00:00 tierra systemd[1578]: Reached target default.target - Main User Target.
+2024-10-24T17:18:59.537938+00:00 tierra systemd[1578]: Startup finished in 68ms.
+2024-10-24T17:18:59.538920+00:00 tierra systemd[1]: Started user@1000.service - User Manager for UID 1000.
+2024-10-24T17:18:59.539791+00:00 tierra systemd[1]: Started session-6.scope - Session 6 of User vagrant.
+```
+# Compruebo que tanto maestro como esclavo pueden contestar a las mismas preguntas
+```
+vagrant@tierra:~$ dig @192.168.57.103 A sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 A sistema.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 39698
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 1ec5de26b9089b0901000000671a81f3887f30ce810d85ea (good)
+;; QUESTION SECTION:
+;sistema.test.                  IN      A
+
+;; ANSWER SECTION:
+sistema.test.           86400   IN      A       192.168.57.103
+
+;; Query time: 0 msec
+;; SERVER: 192.168.57.103#53(192.168.57.103) (UDP)
+;; WHEN: Thu Oct 24 17:20:51 UTC 2024
+;; MSG SIZE  rcvd: 85
+
+vagrant@tierra:~$ dig @192.168.57.102 A sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.102 A sistema.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25056
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+; COOKIE: 060350a279e1d09d01000000671a81f8f8033819910a3074 (good)
+;; QUESTION SECTION:
+;sistema.test.                  IN      A
+
+;; ANSWER SECTION:
+sistema.test.           86400   IN      A       192.168.57.103
+
+;; Query time: 7 msec
+;; SERVER: 192.168.57.102#53(192.168.57.102) (UDP)
+;; WHEN: Thu Oct 24 17:20:56 UTC 2024
+;; MSG SIZE  rcvd: 85
+```

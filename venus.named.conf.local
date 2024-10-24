@@ -6,7 +6,7 @@
 // organization
 //include "/etc/bind/zones.rfc1918";
 
-zone "tierra.sistema.test" {
+zone "sistema.test" {
     type slave;
     file "/var/lib/bind/tierra.sistema.test.zone";
     masters { 192.168.57.103; }; # IP del servidor maestro (tierra)
