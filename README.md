@@ -483,6 +483,31 @@ vagrant@tierra:~$ sudo tail -f /var/log/syslog
 2024-10-24T17:18:59.538920+00:00 tierra systemd[1]: Started user@1000.service - User Manager for UID 1000.
 2024-10-24T17:18:59.539791+00:00 tierra systemd[1]: Started session-6.scope - Session 6 of User vagrant.
 ```
+# También pruebo a hacerlo en venus
+```
+vagrant@venus:~$ dig @192.168.57.103 AXFR sistema.test
+
+; <<>> DiG 9.18.28-1~deb12u2-Debian <<>> @192.168.57.103 AXFR sistema.test
+; (1 server found)
+;; global options: +cmd
+sistema.test.           86400   IN      SOA     tierra.sistema.test. admin.tierra.sistema.test. 2024102301 3600 1800 604800 7200
+sistema.test.           86400   IN      MX      10 marte.sistema.test.
+sistema.test.           86400   IN      NS      venus.sistema.test.
+sistema.test.           86400   IN      NS      tierra.sistema.test.
+sistema.test.           86400   IN      A       192.168.57.103
+mail.sistema.test.      86400   IN      CNAME   marte.sistema.test.
+marte.sistema.test.     86400   IN      A       192.168.57.104
+mercurio.sistema.test.  86400   IN      A       192.168.57.101
+ns1.sistema.test.       86400   IN      CNAME   tierra.sistema.test.
+ns2.sistema.test.       86400   IN      CNAME   venus.sistema.test.
+tierra.sistema.test.    86400   IN      A       192.168.57.103
+venus.sistema.test.     86400   IN      A       192.168.57.102
+sistema.test.           86400   IN      SOA     tierra.sistema.test. admin.tierra.sistema.test. 2024102301 3600 1800 604800 7200
+;; Query time: 0 msec
+;; SERVER: 192.168.57.103#53(192.168.57.103) (TCP)
+;; WHEN: Fri Oct 25 17:26:42 UTC 2024
+;; XFR size: 13 records (messages 1, bytes 354)
+```
 # Compruebo que tanto maestro como esclavo pueden contestar a las mismas preguntas
 ```
 vagrant@tierra:~$ dig @192.168.57.103 A sistema.test

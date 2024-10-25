@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
      apt-get install -y bind9 bind9utils bind9-doc
-
+     systemctl restart bind9
   SHELL
 
   config.vm.define "tierra" do |tierra|
