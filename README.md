@@ -556,3 +556,8 @@ sistema.test.           86400   IN      A       192.168.57.103
 ;; WHEN: Thu Oct 24 17:20:56 UTC 2024
 ;; MSG SIZE  rcvd: 85
 ```
+
+# Autor
+
+Lucas Gómez Martín
+Despliegue de Aplicaciones Web
